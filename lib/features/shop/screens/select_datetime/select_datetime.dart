@@ -1,0 +1,69 @@
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import '../../../../common/widgets/appbar/appbar.dart';
+import '../../../../common/widgets/divider/t_divider.dart';
+import '../../../../utils/constants/sizes.dart';
+import '../../controllers/available_room_controller.dart';
+import 'widgets/calendar_widget.dart';
+import 'widgets/time_widget.dart';
+
+class SelectDateTime extends StatelessWidget {
+  SelectDateTime({super.key});
+
+  final AvailableRoomController controller =
+      Get.find<AvailableRoomController>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar:
+          const TAppBar(title: Text("Booking Details"), showBackArrow: true),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Obx(() {
+              // Accessing date and time directly from the controller
+              final selectedDate = controller.selectedDate.value;
+              final selectedStartTime = controller.selectedStartTime.value;
+              final selectedEndTime = controller.selectedEndTime.value;
+              String dateText =
+                  DateFormat('EEE, dd/MM/yyyy').format(selectedDate);
+
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(children: [
+                    Text(dateText),
+                    Text(selectedStartTime.format(context)),
+                  ]),
+                  const Text("→"),
+                  Column(children: [
+                    Text(dateText),
+                    Text(selectedEndTime.format(context)),
+                  ]),
+                ],
+              );
+            }),
+            const Padding(
+              padding: EdgeInsets.all(TSizes.defaultSpace),
+              child: TCalendar(),
+            ),
+            const TDivider(),
+            const TTimePicker(),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () => Get.back(),
+            child: const Text('Proceed'),
+          ),
+        ),
+      ),
+    );
+  }
+}
