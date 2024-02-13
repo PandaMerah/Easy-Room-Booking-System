@@ -1,12 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BookingModel {
-  String bookingId;
+  // String bookingId;
   String roomId;
   DateTime bookingTime;
   DateTime date;
-  TimeOfDay startTime;
-  TimeOfDay endTime;
+  DateTime startTime;
+  DateTime endTime;
   String repeat;
   String userId;
   String status;
@@ -14,7 +14,7 @@ class BookingModel {
   String notes;
 
   BookingModel({
-    required this.bookingId,
+    // required this.bookingId,
     required this.roomId,
     required this.bookingTime,
     required this.date,
@@ -28,27 +28,48 @@ class BookingModel {
   });
 
   static BookingModel empty() => BookingModel(
-      bookingId: '',
+      // bookingId: '',
       roomId: '',
       bookingTime: DateTime.now(),
       date: DateTime.now(),
-      startTime: TimeOfDay.now(),
-      endTime: TimeOfDay.now(),
+      startTime: DateTime.now(),
+      endTime: DateTime.now(),
       repeat: '',
       userId: '',
       status: '');
 
-  // Create a method to map from JSON or your data source format, if necessary
-  // static BookingModel fromMap(Map<String, dynamic> map) {
-  //   return BookingModel(
-  //     // Assign values from 'map' to the respective fields
-  //   );
-  // }
+  Map<String, dynamic> toJson() {
+    return {
+      // 'bookingId': bookingId,
+      'roomId': roomId,
+      'bookingTime': bookingTime,
+      'date': date,
+      'startTime': startTime,
+      'endTime': endTime,
+      'repeat': repeat,
+      'userId': userId,
+      'status': status,
+      'title': title,
+      'notes': notes,
+    };
+  }
 
-  // Similarly, you can create a method to convert the booking data to a Map or JSON format
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     // Convert fields to key-value pairs
-  //   };
-  // }
+  factory BookingModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> document) {
+    final data = document.data() ?? {};
+
+    return BookingModel(
+      // bookingId: document.id,
+      roomId: data['roomId'] as String? ?? '',
+      bookingTime: (data['bookingTime'] as Timestamp).toDate(),
+      date: (data['date'] as Timestamp).toDate(),
+      startTime: (data['startTime'] as Timestamp).toDate(), // Corrected
+      endTime: (data['endTime'] as Timestamp).toDate(), // Corrected
+      repeat: data['repeat'] as String? ?? '',
+      userId: data['userId'] as String? ?? '',
+      status: data['status'] as String? ?? '',
+      title: data['title'] as String? ?? '',
+      notes: data['notes'] as String? ?? '',
+    );
+  }
 }

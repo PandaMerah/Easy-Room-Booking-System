@@ -29,26 +29,27 @@ class SelectDateTime extends StatelessWidget {
               final selectedEndTime = controller.selectedEndTime.value;
               String dateText =
                   DateFormat('EEE, dd/MM/yyyy').format(selectedDate);
+              String formattedStartTime = DateFormat.jm()
+                  .format(selectedStartTime); // For 12-hour format
+              String formattedEndTime =
+                  DateFormat.jm().format(selectedEndTime); // For 12-hour format
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Column(children: [
                     Text(dateText),
-                    Text(selectedStartTime.format(context)),
+                    Text(formattedStartTime),
                   ]),
                   const Text("→"),
                   Column(children: [
                     Text(dateText),
-                    Text(selectedEndTime.format(context)),
+                    Text(formattedEndTime),
                   ]),
                 ],
               );
             }),
-            const Padding(
-              padding: EdgeInsets.all(TSizes.defaultSpace),
-              child: TCalendar(),
-            ),
+            const TCalendar(),
             const TDivider(),
             const TTimePicker(),
           ],

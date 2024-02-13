@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import '../../../common/widgets/loaders/loaders.dart';
 import '../../../utils/constants/sizes.dart';
 import '../models/room_model.dart';
-import 'dummy_data.dart';
 
 class RoomController extends GetxController {
   static RoomController get instance => Get.find();
+
+  RxList<RoomModel> allRooms = <RoomModel>[].obs;
+  final isLoading = false.obs;
 
   final rooms = <RoomModel>[].obs;
   // Ini untuk controller get data daripada backend terhadap tempahan yang dah ada pastu buat decision sama ada dah booking atau belum guna if else
@@ -18,9 +22,27 @@ class RoomController extends GetxController {
   /// -- Initialize Rooms from your backend
   @override
   void onInit() {
-    // You can initialize rooms from your backend here, but for this example, we're using dummy data.
-    rooms.value = TDummyData.rooms;
+    fetchRooms();
     super.onInit();
+  }
+
+  /// Get All Rooms from Firebase
+  Future<void> fetchRooms() async {
+    isLoading.value = true;
+    try {
+      // Fetch Rooms from Firebase
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('Rooms').get();
+      final rooms =
+          querySnapshot.docs.map((doc) => RoomModel.fromSnapshot(doc)).toList();
+
+      // Update The Rooms list
+      allRooms.assignAll(rooms);
+    } catch (e) {
+      TLoaders.errorSnackBar(title: 'Error', message: e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   /// -- Get all room images
@@ -53,7 +75,7 @@ class RoomController extends GetxController {
                 padding: const EdgeInsets.symmetric(
                     vertical: TSizes.defaultSpace * 2,
                     horizontal: TSizes.defaultSpace),
-                child: Image(image: AssetImage(image)),
+                child: Image.network(image),
               ),
               const SizedBox(height: TSizes.spaceBtwSections),
               Align(
@@ -75,12 +97,17 @@ class RoomController extends GetxController {
   Map<String, List<IconData>> getRoomIcons() {
     Map<String, List<IconData>> roomIcons = {};
 
-    for (var room in rooms) {
-      List<IconData> icons = room.utilities
-          .map((utility) => _getIconData(utility as String))
-          .where((icon) => icon != null)
-          .cast<IconData>()
-          .toList();
+    for (var room in allRooms) {
+      // Make sure to iterate over allRooms
+      List<IconData> icons = [];
+
+      for (var utility in room.utilities) {
+        IconData? icon = _getIconData(utility);
+        if (icon != null) {
+          icons.add(icon);
+        }
+      }
+
       roomIcons[room.id] = icons;
     }
 
@@ -98,15 +125,5 @@ class RoomController extends GetxController {
       default:
         return null; // Default icon if utility is not recognized
     }
-
-    /// -- Get All Utilities
-    // Set<String> getAllUtilities(RoomModel room) {
-    //   Set<String> utilities = {};
-
-    //   for (var room in rooms) {
-    //     utilities.addAll(room.utilities as Iterable<String>);
-    //   }
-    //   return utilities;
-    // }
   }
 }

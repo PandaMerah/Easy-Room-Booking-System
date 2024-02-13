@@ -53,6 +53,11 @@ class RoomDetailScreen extends StatelessWidget {
               final selectedEndTime = controller.selectedEndTime.value;
               String dateText =
                   DateFormat('EEE, dd/MM/yyyy').format(selectedDate);
+              String formattedStartTime = DateFormat.jm()
+                  .format(selectedStartTime); // For 12-hour format
+              String formattedEndTime =
+                  DateFormat.jm().format(selectedEndTime); // For 12-hour format
+
               return Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: TSizes.defaultSpace,
@@ -89,8 +94,7 @@ class RoomDetailScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text("Booking Time"),
-                        Text(
-                            "${selectedStartTime.format(context)} - ${selectedEndTime.format(context)}"),
+                        Text("$formattedStartTime - $formattedEndTime"),
                       ],
                     ),
                     const SizedBox(height: TSizes.spaceBtwItems / 6),
@@ -138,7 +142,7 @@ class RoomDetailScreen extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () => Get.to(() => ProceedBooking(roomId: room.id,)),
+            onPressed: () => Get.to(() => ProceedBooking(room: room)),
             child: const Text('Proceed'),
           ),
         ),

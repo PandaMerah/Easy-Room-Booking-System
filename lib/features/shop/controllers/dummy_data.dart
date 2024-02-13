@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:flutter/material.dart';
 import '../../../routes/routes.dart';
 import '../../../utils/constants/enums.dart';
 import '../../../utils/constants/image_strings.dart';
@@ -19,44 +18,43 @@ import '../models/product_model.dart';
 import '../models/product_review_model.dart';
 import '../models/product_variation_model.dart';
 import '../models/room_model.dart';
-import '../models/booking_model.dart';
 
 class TDummyData {
-  static final List<BookingModel> bookings = [
-    BookingModel(
-      bookingId: 'B001',
-      roomId: '1',
-      bookingTime: DateTime(2023, 10, 1),
-      date: DateTime(2023, 10, 2),
-      startTime: TimeOfDay(hour: 10, minute: 00),
-      endTime: TimeOfDay(hour: 12, minute: 00),
-      repeat: 'daily', // 'daily', 'weekly', 'monthly', 'yearly
-      userId: 'User1',
-      status: 'active',
-    ),
-    BookingModel(
-      bookingId: 'B002',
-      roomId: '2',
-      bookingTime: DateTime(2023, 10, 3),
-      date: DateTime(2023, 10, 4),
-      startTime: TimeOfDay(hour: 14, minute: 00),
-      endTime: TimeOfDay(hour: 16, minute: 00),
-      repeat: 'weekly',
-      userId: 'User2',
-      status: 'upcoming',
-    ),
-    BookingModel(
-      bookingId: 'B003',
-      roomId: '3',
-      bookingTime: DateTime(2023, 10, 5),
-      date: DateTime(2023, 10, 6),
-      startTime: TimeOfDay(hour: 9, minute: 30),
-      endTime: TimeOfDay(hour: 11, minute: 30),
-      repeat: 'monthly',
-      userId: 'User3',
-      status: 'completed',
-    ),
-  ];
+  // static final List<BookingModel> bookings = [
+  //   BookingModel(
+  //     bookingId: 'B001',
+  //     roomId: '1',
+  //     bookingTime: DateTime(2023, 10, 1),
+  //     date: DateTime(2023, 10, 2),
+  //     startTime: TimeOfDay(hour: 10, minute: 00),
+  //     endTime: TimeOfDay(hour: 12, minute: 00),
+  //     repeat: 'daily', // 'daily', 'weekly', 'monthly', 'yearly
+  //     userId: 'User1',
+  //     status: 'active',
+  //   ),
+  //   BookingModel(
+  //     bookingId: 'B002',
+  //     roomId: '2',
+  //     bookingTime: DateTime(2023, 10, 3),
+  //     date: DateTime(2023, 10, 4),
+  //     startTime: TimeOfDay(hour: 14, minute: 00),
+  //     endTime: TimeOfDay(hour: 16, minute: 00),
+  //     repeat: 'weekly',
+  //     userId: 'User2',
+  //     status: 'upcoming',
+  //   ),
+  //   BookingModel(
+  //     bookingId: 'B003',
+  //     roomId: '3',
+  //     bookingTime: DateTime(2023, 10, 5),
+  //     date: DateTime(2023, 10, 6),
+  //     startTime: TimeOfDay(hour: 9, minute: 30),
+  //     endTime: TimeOfDay(hour: 11, minute: 30),
+  //     repeat: 'monthly',
+  //     userId: 'User3',
+  //     status: 'completed',
+  //   ),
+  // ];
 
   /// -- Rooms
   static final List<RoomModel> rooms = [

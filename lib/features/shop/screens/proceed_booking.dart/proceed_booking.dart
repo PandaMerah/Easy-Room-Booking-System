@@ -6,25 +6,37 @@ import '../../../../common/widgets/divider/t_divider.dart';
 import '../../controllers/available_room_controller.dart'; // Import your controller
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../utils/constants/sizes.dart';
+import '../../controllers/book_room_controller.dart';
 import '../../models/room_model.dart';
 
 class ProceedBooking extends StatelessWidget {
-  const ProceedBooking({super.key, required this.roomId});
-  final String roomId;
+  ProceedBooking({super.key, required this.room});
+
+  final RoomModel room;
+  final controller = Get.find<AvailableRoomController>();
+  final bookController = Get.find<BookRoomController>();
+  // final RoomModel room = controller.findRoomById(roomId);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<AvailableRoomController>();
-    final RoomModel room = controller.findRoomById(roomId);
-    final roomName = room.name;
-
     final selectedDate = controller.selectedDate.value;
     final selectedStartTime = controller.selectedStartTime.value;
     final selectedEndTime = controller.selectedEndTime.value;
 
     String formattedDate = DateFormat('EEE, dd/MM/yyyy').format(selectedDate);
-    String timeRange =
-        "${selectedStartTime.format(context)} - ${selectedEndTime.format(context)}";
+    String formattedStartTime = DateFormat('HH:mm').format(selectedStartTime);
+    String formattedEndTime = DateFormat('HH:mm').format(selectedEndTime);
+
+    String timeRange = "$formattedStartTime - $formattedEndTime";
+
+    String calculateDuration(DateTime startTime, DateTime endTime) {
+      final duration = endTime.difference(startTime);
+      // Convert duration to hours, rounding to two decimal places
+      final durationInHours = duration.inMinutes / 60.0;
+      return durationInHours.toStringAsFixed(2);
+    }
+
+    String duration = calculateDuration(selectedStartTime, selectedEndTime);
 
     return Scaffold(
       appBar: const TAppBar(title: Text('Booking Review'), showBackArrow: true),
@@ -42,10 +54,10 @@ class ProceedBooking extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(roomName,
+                      Text(room.name,
                           style: Theme.of(context).textTheme.titleLarge),
                       const SizedBox(height: TSizes.spaceBtwItems),
-                      UtilitiesBar(roomId: roomId)
+                      UtilitiesBar(roomId: room.id)
                     ],
                   ),
                   Container(
@@ -54,7 +66,7 @@ class ProceedBooking extends StatelessWidget {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: AssetImage(
+                        image: NetworkImage(
                             room.thumbnail), // Replace with your image provider
                       ),
                     ),
@@ -73,7 +85,8 @@ class ProceedBooking extends StatelessWidget {
                   const SizedBox(height: TSizes.spaceBtwItems / 2),
                   Text("Date: $formattedDate"),
                   Text("Time: $timeRange"),
-                  const Text("Duration:  hours") // Do the duration calculation here
+                  Text(
+                      "Duration: $duration hours") // Do the duration calculation here
                 ],
               ),
               const SizedBox(height: TSizes.spaceBtwSections / 2),
@@ -88,10 +101,18 @@ class ProceedBooking extends StatelessWidget {
                   const SizedBox(height: TSizes.spaceBtwItems),
                   Text("Booking Title",
                       style: Theme.of(context).textTheme.titleMedium),
-                  const Text("Lorem Ip Supm"),
+                  const SizedBox(height: TSizes.spaceBtwInputFields / 2),
+                  TextField(
+                    onChanged: (value) => controller.bookingTitle.value = value,
+                    decoration: const InputDecoration(labelText: "Optional"),
+                  ),
                   const SizedBox(height: TSizes.spaceBtwItems / 2),
                   Text("Notes", style: Theme.of(context).textTheme.titleMedium),
-                  const Text("Lorem Ip Supm"),
+                  const SizedBox(height: TSizes.spaceBtwInputFields / 2),
+                  TextField(
+                    onChanged: (value) => controller.bookingNotes.value = value,
+                    decoration: const InputDecoration(labelText: "Optional"),
+                  ),
                 ],
               )
             ],
@@ -103,7 +124,7 @@ class ProceedBooking extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: () => Get.to(() => ProceedBooking(roomId: roomId)),
+            onPressed: (() => bookController.bookRoom(room.id)),
             child: const Text('Book Now'),
           ),
         ),

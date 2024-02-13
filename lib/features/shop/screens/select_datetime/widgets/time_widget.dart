@@ -55,27 +55,17 @@ class _TTimePickerState extends State<TTimePicker> {
           is24HourMode: false,
           itemHeight: 50,
           time: _isSettingStartTime
-              ? controller.selectedStartTime.value.toDateTime()
-              : controller.selectedEndTime.value.toDateTime(),
+              ? controller.selectedStartTime.value
+              : controller.selectedEndTime.value,
           onTimeChange: (time) {
-            setState(() {
-              TimeOfDay selectedTime = TimeOfDay.fromDateTime(time);
-              if (_isSettingStartTime) {
-                controller.selectedStartTime.value = selectedTime;
-              } else {
-                controller.selectedEndTime.value = selectedTime;
-              }
-            });
+            if (_isSettingStartTime) {
+              controller.selectedStartTime.value = time;
+            } else {
+              controller.selectedEndTime.value = time;
+            }
           },
         )
       ],
     );
-  }
-}
-
-extension on TimeOfDay {
-  DateTime toDateTime() {
-    final now = DateTime.now();
-    return DateTime(now.year, now.month, now.day, hour, minute);
   }
 }

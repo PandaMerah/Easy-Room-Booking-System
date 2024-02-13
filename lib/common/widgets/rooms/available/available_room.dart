@@ -1,32 +1,39 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:cwt_ecommerce_ui_kit/features/shop/screens/select_datetime/select_datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../../../../features/shop/controllers/available_room_controller.dart';
-import '../../../../features/shop/controllers/dummy_data.dart';
-import '../../../../features/shop/models/booking_model.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../divider/t_divider.dart';
 import '../../layouts/grid_layout.dart';
 import '../room_card/room_card_vertical.dart';
 
-class TAvailableRooms extends StatelessWidget {
-  const TAvailableRooms({
-    super.key,
-    required this.bookings,
-    // required this.rooms,
-  });
+class TAvailableRooms extends StatefulWidget {
+  const TAvailableRooms({super.key});
 
-  final List<BookingModel> bookings; // List of all bookings
-  // final List<RoomModel> rooms; // List of all rooms
+  @override
+  _TAvailableRoomsState createState() => _TAvailableRoomsState();
+}
+
+class _TAvailableRoomsState extends State<TAvailableRooms> {
+  final AvailableRoomController controller = Get.put(AvailableRoomController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.adjustTimeToNearestHalfHour();
+    controller.updateAvailableRooms();
+  }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AvailableRoomController());
-
-    // Fetch all rooms and update available rooms
-    // Replace this with your actual method to fetch or define the list of all rooms
-    controller.updateAvailableRooms(TDummyData.rooms);
+    String formatTimeOfDay(BuildContext context, DateTime dateTime) {
+      final format = DateFormat.jm(); // Use any format you need
+      return format.format(dateTime);
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -49,12 +56,15 @@ class TAvailableRooms extends StatelessWidget {
               }
 
               final buttonText =
-                  '$dateText, ${selectedStartTime.format(context)} - ${selectedEndTime.format(context)}';
+                  '$dateText, ${formatTimeOfDay(context, selectedStartTime)} - ${formatTimeOfDay(context, selectedEndTime)}';
 
               // Button for selecting the booking date and time
               return ElevatedButton(
                 onPressed: () => Get.to(() => SelectDateTime()),
-                child: Text(buttonText),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(buttonText),
+                ),
               );
             }),
             const SizedBox(width: TSizes.spaceBtwItems),
@@ -72,12 +82,16 @@ class TAvailableRooms extends StatelessWidget {
         const SizedBox(height: TSizes.spaceBtwItems),
 
         // Displaying available rooms
-        TGridLayout(
-            itemCount: controller.availableRoomsId.length, // Updated to use roomsid
-            itemBuilder: (context, index) {
-              return TRoomCardVertical(
-                  room: controller.availableRoomsId[index]); // Updated to use roomsid
-            }),
+        Obx(
+          () => TGridLayout(
+              itemCount:
+                  controller.availableRooms.length, // Updated to use roomsid
+              itemBuilder: (context, index) {
+                return TRoomCardVertical(
+                    room: controller
+                        .availableRooms[index]); // Updated to use roomsid
+              }),
+        ),
       ],
     );
   }

@@ -1,8 +1,8 @@
-import 'package:cwt_ecommerce_ui_kit/features/shop/screens/room_detail/room_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:cwt_ecommerce_ui_kit/common/widgets/rooms/utilities/utilities_bar.dart';
+import '../../../../features/shop/screens/room_detail/room_detail.dart';
 import '../../../../features/shop/models/room_model.dart';
 import '../../../../utils/constants/colors.dart';
 import '../../../../utils/constants/sizes.dart';
@@ -48,7 +48,9 @@ class TRoomCardVertical extends StatelessWidget {
                   Center(
                       child: TRoundedImage(
                     imageUrl: room.thumbnail,
+                    isNetworkImage: true,
                     applyImageRadius: true,
+                    fit: BoxFit.fill,
                   )),
 
                   /// -- Favourite Icon Button

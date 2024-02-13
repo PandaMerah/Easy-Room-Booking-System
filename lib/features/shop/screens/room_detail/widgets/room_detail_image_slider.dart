@@ -39,8 +39,10 @@ class TRoomImageSlider extends StatelessWidget {
                         : controller.selectedRoomImage.value;
                     return GestureDetector(
                         onTap: () => controller.showEnlargedImage(image),
-                        child: Image(
-                            image: AssetImage(image), fit: BoxFit.contain));
+                        child: Image.network(
+                          image,
+                          fit: BoxFit.contain,
+                        ));
                   }),
                 ),
               ),
@@ -69,6 +71,7 @@ class TRoomImageSlider extends StatelessWidget {
                           width: 80,
                           fit: BoxFit.contain,
                           imageUrl: images[index],
+                          isNetworkImage: true,
                           padding: const EdgeInsets.all(TSizes.sm),
                           backgroundColor:
                               isDark ? TColors.dark : TColors.white,
@@ -88,9 +91,8 @@ class TRoomImageSlider extends StatelessWidget {
 
             /// Appbar Icons
             TAppBar(
-              showBackArrow: true,
-              actions: [TFavouriteIcon(productId: room.id)]
-            ),
+                showBackArrow: true,
+                actions: [TFavouriteIcon(productId: room.id)]),
           ],
         ),
       ),

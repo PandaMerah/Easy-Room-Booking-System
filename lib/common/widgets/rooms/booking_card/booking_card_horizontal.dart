@@ -28,6 +28,8 @@ class BookingCardHorizontal extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
     String formattedDate = DateFormat('yyyy-MM-dd').format(booking.date);
+    String formattedStartTime = DateFormat('HH:mm').format(booking.startTime);
+    String formattedEndTime = DateFormat('HH:mm').format(booking.endTime);
     // Calculate the duration of the booking
     String duration = _calculateDuration(booking.startTime, booking.endTime);
 
@@ -73,8 +75,7 @@ class BookingCardHorizontal extends StatelessWidget {
                   ),
                 ),
                 Text('Date: $formattedDate'),
-                Text(
-                    'Time: ${booking.startTime.format(context)} - ${booking.endTime.format(context)}'),
+                Text('Time: $formattedStartTime - $formattedEndTime'),
                 Text('Duration: $duration'),
                 Text('Status: ${booking.status}'),
                 // Add more details as needed
@@ -86,16 +87,9 @@ class BookingCardHorizontal extends StatelessWidget {
     );
   }
 
-  String _calculateDuration(TimeOfDay startTime, TimeOfDay endTime) {
-    // Convert TimeOfDay to DateTime
-    final now = DateTime.now();
-    final startDateTime = DateTime(
-        now.year, now.month, now.day, startTime.hour, startTime.minute);
-    final endDateTime =
-        DateTime(now.year, now.month, now.day, endTime.hour, endTime.minute);
-
-    // Calculate Duration
-    final duration = endDateTime.difference(startDateTime);
+  String _calculateDuration(DateTime startTime, DateTime endTime) {
+    // Calculate Duration directly with DateTime
+    final duration = endTime.difference(startTime);
 
     // Format Duration - e.g., "2 hours, 30 minutes"
     String formattedDuration = '';
