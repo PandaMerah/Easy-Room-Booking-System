@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../personalization/models/user_model.dart';
+import 'room_model.dart';
+
 class BookingModel {
-  // String bookingId;
   String roomId;
   DateTime bookingTime;
   DateTime date;
@@ -12,9 +14,11 @@ class BookingModel {
   String status;
   String title;
   String notes;
+  RoomModel? roomDetails;
+  UserModel? userDetails;
+  // UserModel? userDetails;
 
   BookingModel({
-    // required this.bookingId,
     required this.roomId,
     required this.bookingTime,
     required this.date,
@@ -25,6 +29,8 @@ class BookingModel {
     required this.status,
     this.title = '',
     this.notes = '',
+    this.roomDetails,
+    this.userDetails,
   });
 
   static BookingModel empty() => BookingModel(

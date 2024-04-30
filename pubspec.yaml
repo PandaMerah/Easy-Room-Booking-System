@@ -39,13 +39,15 @@ dependencies:
   table_calendar: ^3.0.9
   time_picker_spinner: ^0.0.1
   firebase_core: ^2.24.2
-  lottie: ^2.7.0
+  lottie: ^3.1.0
   connectivity_plus: ^5.0.2
   firebase_auth: ^4.15.3
   cloud_firestore: ^4.13.6
   location: 5.0.3
   google_sign_in: ^6.2.1
   shimmer: ^3.0.0
+  firebase_messaging: ^14.7.15
+  awesome_notifications: ^0.8.2
 
 
 

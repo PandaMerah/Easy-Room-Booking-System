@@ -15,21 +15,20 @@ import '../../../../features/shop/models/booking_model.dart';
 import '../../../../features/shop/models/room_model.dart';
 
 class BookingCardHorizontal extends StatelessWidget {
-  final BookingModel booking;
-  final RoomModel room;
-
   const BookingCardHorizontal({
     super.key,
     required this.booking,
     required this.room,
   });
+  final BookingModel booking;
+  final RoomModel room;
 
   @override
   Widget build(BuildContext context) {
     final dark = THelperFunctions.isDarkMode(context);
-    String formattedDate = DateFormat('yyyy-MM-dd').format(booking.date);
-    String formattedStartTime = DateFormat('HH:mm').format(booking.startTime);
-    String formattedEndTime = DateFormat('HH:mm').format(booking.endTime);
+    String formattedDate = DateFormat('dd.MM.yyyy').format(booking.date);
+    String formattedStartTime = DateFormat('h:mm a').format(booking.startTime);
+    String formattedEndTime = DateFormat('h:mm a').format(booking.endTime);
     // Calculate the duration of the booking
     String duration = _calculateDuration(booking.startTime, booking.endTime);
 
@@ -51,7 +50,7 @@ class BookingCardHorizontal extends StatelessWidget {
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage(
+                image: NetworkImage(
                     room.thumbnail), // Replace with your image provider
               ),
             ),
@@ -68,7 +67,7 @@ class BookingCardHorizontal extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Text(
-                  room.name,
+                  booking.roomDetails?.name ?? 'Not Working',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16.0,
@@ -77,7 +76,7 @@ class BookingCardHorizontal extends StatelessWidget {
                 Text('Date: $formattedDate'),
                 Text('Time: $formattedStartTime - $formattedEndTime'),
                 Text('Duration: $duration'),
-                Text('Status: ${booking.status}'),
+                // Text('Status: ${booking.status}'),
                 // Add more details as needed
               ],
             ),

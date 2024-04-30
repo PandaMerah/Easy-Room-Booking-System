@@ -22,21 +22,6 @@ class AvailableRoomController extends GetxController {
     return time.hour * 60 + time.minute;
   }
 
-  void adjustTimeToNearestHalfHour() {
-    final DateTime now = DateTime.now();
-    DateTime newStartTime = selectedStartTime.value;
-    DateTime newEndTime = selectedEndTime.value;
-
-    // Round the current or selected start time to the next or current half-hour mark
-    newStartTime =
-        roundToNearestHalfHour(newStartTime.isBefore(now) ? now : newStartTime);
-    // Ensure the end time is at least 30 minutes after the new start time
-    newEndTime = newStartTime.add(const Duration(minutes: 30));
-
-    selectedStartTime.value = newStartTime;
-    selectedEndTime.value = newEndTime;
-  }
-
   DateTime roundToNearestHalfHour(DateTime time) {
     int newMinute = (time.minute >= 30) ? 30 : 0;
     DateTime roundedTime =
@@ -56,12 +41,22 @@ class AvailableRoomController extends GetxController {
     return roundedTime;
   }
 
-  void setSelectedDate(DateTime date) {
-    selectedDate.value = date;
-    updateAvailableRooms();
+  void adjustTimeToNearestHalfHour() {
+    final DateTime now = DateTime.now();
+    DateTime newStartTime = selectedStartTime.value;
+    DateTime newEndTime = selectedEndTime.value;
+
+    // Round the current or selected start time to the next or current half-hour mark
+    newStartTime =
+        roundToNearestHalfHour(newStartTime.isBefore(now) ? now : newStartTime);
+    // Ensure the end time is at least 30 minutes after the new start time
+    newEndTime = newStartTime.add(const Duration(minutes: 30));
+
+    selectedStartTime.value = newStartTime;
+    selectedEndTime.value = newEndTime;
   }
 
-  void updateAvailableRooms() {
+  Future<void> updateAvailableRooms() async {
     List<RoomModel> allRooms = roomController.allRooms;
     List<BookingModel> bookings = bookingController.bookings;
 
@@ -83,15 +78,19 @@ class AvailableRoomController extends GetxController {
 
       return isSameDay && isTimeOverlapping;
     }).toList();
-
     Set<String> bookedRoomIds =
         overlappingBookings.map((b) => b.roomId).toSet();
     availableRooms.value =
         allRooms.where((room) => !bookedRoomIds.contains(room.id)).toList();
   }
 
-  RoomModel findRoomById(String id) {
-    return availableRooms.firstWhere((room) => room.id == id,
-        orElse: () => RoomModel.empty());
+  void setSelectedDate(DateTime date) {
+    selectedDate.value = date;
+    updateAvailableRooms();
   }
+
+  // RoomModel findRoomById(String id) {
+  //   return availableRooms.firstWhere((room) => room.id == id,
+  //       orElse: () => RoomModel.empty());
+  // }
 }

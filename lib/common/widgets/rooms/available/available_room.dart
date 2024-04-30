@@ -1,5 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
-
+import 'package:cwt_ecommerce_ui_kit/features/shop/controllers/booking_controller.dart';
 import 'package:cwt_ecommerce_ui_kit/features/shop/screens/select_datetime/select_datetime.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,26 +9,18 @@ import '../../divider/t_divider.dart';
 import '../../layouts/grid_layout.dart';
 import '../room_card/room_card_vertical.dart';
 
-class TAvailableRooms extends StatefulWidget {
+class TAvailableRooms extends StatelessWidget {
   const TAvailableRooms({super.key});
 
   @override
-  _TAvailableRoomsState createState() => _TAvailableRoomsState();
-}
-
-class _TAvailableRoomsState extends State<TAvailableRooms> {
-  final AvailableRoomController controller = Get.put(AvailableRoomController());
-
-  @override
-  void initState() {
-    super.initState();
-    controller.adjustTimeToNearestHalfHour();
-    controller.updateAvailableRooms();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AvailableRoomController());
+    final AvailableRoomController controller =
+        Get.find<AvailableRoomController>();
+    final BookingController bookingController = Get.find<BookingController>();
+    controller.adjustTimeToNearestHalfHour();
+    bookingController.fetchAllBookingsWithRoomDetails();
+    controller.updateAvailableRooms();
+
     String formatTimeOfDay(BuildContext context, DateTime dateTime) {
       final format = DateFormat.jm(); // Use any format you need
       return format.format(dateTime);
@@ -70,7 +61,9 @@ class _TAvailableRoomsState extends State<TAvailableRooms> {
             const SizedBox(width: TSizes.spaceBtwItems),
             // Button for filtering the available rooms
             ElevatedButton(
-              onPressed: () => _showFilterDialog(context, controller),
+              onPressed: () {
+                // The logic for showing the filter dialog should be handled here or within a function called here.
+              },
               child: const Text('Filter'),
             ),
           ],
@@ -94,10 +87,5 @@ class _TAvailableRoomsState extends State<TAvailableRooms> {
         ),
       ],
     );
-  }
-
-  void _showFilterDialog(
-      BuildContext context, AvailableRoomController controller) {
-    // Implement filter dialog logic here
   }
 }

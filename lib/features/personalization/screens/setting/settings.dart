@@ -2,6 +2,8 @@
 
 import 'package:cwt_ecommerce_ui_kit/common/widgets/list_tiles/user_profile_tile.dart';
 import 'package:cwt_ecommerce_ui_kit/data/repositories/authentication_repository.dart';
+import 'package:cwt_ecommerce_ui_kit/features/personalization/screens/setting/policy_settings.dart';
+import 'package:cwt_ecommerce_ui_kit/features/shop/screens/today_report/history_booking.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -15,6 +17,7 @@ import '../../../../utils/constants/sizes.dart';
 import '../../../shop/controllers/dummy_data.dart';
 import '../../../shop/screens/cart/cart.dart';
 import '../../../shop/screens/order/order.dart';
+import '../../../shop/screens/today_report/today_report.dart';
 import '../address/address.dart';
 import '../profile/profile.dart';
 
@@ -55,9 +58,15 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// -- Account  Settings
+                  // -- Booking History
                   const TSectionHeading(
-                      title: 'Account Settings', showActionButton: false),
+                      title: 'Booking History', showActionButton: false),
+
+                  TSettingsMenuTile(
+                      icon: Iconsax.notification,
+                      title: 'Booking History',
+                      subTitle: 'See today bookings',
+                      onTap: () => Get.to(() => const TodayReport())),
                   const SizedBox(height: TSizes.spaceBtwItems),
 
                   /// -- My Addresses
@@ -92,29 +101,38 @@ class SettingsScreen extends StatelessWidget {
                   //     title: 'My Coupons',
                   //     subTitle: 'List of all the discounted coupons'),
                   /// -- Account Privacy
-                  const TSettingsMenuTile(
-                      icon: Iconsax.security_card,
-                      title: 'Account Privacy',
-                      subTitle: 'Manage data usage and connected accounts'),
 
-                  /// -- Notifications
-                  TSettingsMenuTile(
-                      icon: Iconsax.notification,
-                      title: 'Notifications',
-                      subTitle: 'Set any kind of notification message',
-                      onTap: () {}),
+                  // const TSettingsMenuTile(
+                  //     icon: Iconsax.security_card,
+                  //     title: 'Account Privacy',
+                  //     subTitle: 'Manage data usage and connected accounts'),
+
+                  // /// -- Notifications
+                  // TSettingsMenuTile(
+                  //     icon: Iconsax.notification,
+                  //     title: 'Notifications',
+                  //     subTitle: 'Set any kind of notification message',
+                  //     onTap: () {}),
 
                   /// -- App Settings
-                  const SizedBox(height: TSizes.spaceBtwSections),
+                  // const SizedBox(height: TSizes.spaceBtwSections),
                   const TSectionHeading(
                       title: 'App Settings (Developer Only)',
                       showActionButton: false),
+
                   const SizedBox(height: TSizes.spaceBtwItems),
                   TSettingsMenuTile(
                       icon: Iconsax.notification,
                       title: 'Booking Policy',
                       subTitle: 'Adjust all the booking policy',
-                      onTap: () {}),
+                      onTap: () => Get.to(() => const PolicyScreen())),
+
+                  TSettingsMenuTile(
+                      icon: Iconsax.notification,
+                      title: 'Booking History',
+                      subTitle: 'See all bookings',
+                      onTap: () => Get.to(() => const HistoryBooking())),
+
                   // TSettingsMenuTile(
                   //   icon: Iconsax.location,
                   //   title: 'Geolocation',

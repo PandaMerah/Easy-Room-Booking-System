@@ -1,69 +1,77 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import '../models/booking_model.dart';
+import '../models/room_model.dart';
+import '../../personalization/controllers/user_controller.dart';
 
 class BookingController extends GetxController {
-  static BookingController get instance => Get.find();
-
   final bookings = <BookingModel>[].obs;
+  final UserController userController = Get.find<UserController>();
+  final activeBookings = <BookingModel>[].obs;
+  final upcomingBookings = <BookingModel>[].obs;
+  final endedBookings = <BookingModel>[].obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchAllBookings();
+    fetchAllBookingsWithRoomDetails();
   }
 
-  Future<void> fetchAllBookings() async {
-    try {
-      final snapshot =
-          await FirebaseFirestore.instance.collection('Bookings').get();
-      var fetchedBookings =
-          snapshot.docs.map((doc) => BookingModel.fromSnapshot(doc)).toList();
-      bookings.assignAll(fetchedBookings);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching bookings: $e');
-      }
-      // Handle the error appropriately
+  Future<void> fetchAllBookingsWithRoomDetails() async {
+    // Ensure you have a valid user ID
+    final userId = userController.user.value.id;
+    if (userId.isEmpty) {
+      // Handle case where there is no user logged in
+      return;
     }
-  }
 
-  List<BookingModel> getAllBookings() {
-    return bookings.toList();
-  }
+    // Fetch bookings for the logged-in user and rooms concurrently to improve performance
+    final bookingSnapshotFuture = FirebaseFirestore.instance
+        .collection('Bookings')
+        .where('userId', isEqualTo: userId) // Filter bookings by userId
+        .get();
+    final roomsSnapshotFuture =
+        FirebaseFirestore.instance.collection('Rooms').get();
 
-  // Update methods to use the bookings list from Firestore
-  List<BookingModel> getBookingsByStatus(String status) {
-    return bookings.where((booking) => booking.status == status).toList();
-  }
+    // Await both futures to complete
+    final bookingSnapshot = await bookingSnapshotFuture;
+    final roomSnapshot = await roomsSnapshotFuture;
 
-  List<BookingModel> getBookingsByRoom(String roomId) {
-    return bookings.where((booking) => booking.roomId == roomId).toList();
-  }
-
-  List<BookingModel> getBookingsByUser(String userId) {
-    return bookings.where((booking) => booking.userId == userId).toList();
-  }
-
-  List<BookingModel> getBookingsByDate(DateTime date) {
-    return bookings
-        .where((booking) => booking.date.isAtSameMomentAs(date))
+    List<BookingModel> fetchedBookings = bookingSnapshot.docs
+        .map((doc) => BookingModel.fromSnapshot(doc))
         .toList();
+    List<RoomModel> allRooms =
+        roomSnapshot.docs.map((doc) => RoomModel.fromSnapshot(doc)).toList();
+
+    // Create a map of roomId to RoomModel for quick room details lookup
+    Map<String, RoomModel> roomMap = {for (var room in allRooms) room.id: room};
+
+    // Attach room details to each booking
+    for (var booking in fetchedBookings) {
+      if (roomMap.containsKey(booking.roomId)) {
+        booking.roomDetails = roomMap[booking.roomId];
+      }
+    }
+
+    // Update observable list of bookings and categorize them
+    bookings.assignAll(fetchedBookings);
+    categorizeBookings();
   }
 
-  List<BookingModel> getBookingsByDateRange(
-      DateTime startDate, DateTime endDate) {
-    return bookings
-        .where((booking) =>
-            booking.date.isAfter(startDate) && booking.date.isBefore(endDate))
-        .toList();
+  void categorizeBookings() {
+    DateTime now = DateTime.now();
+    activeBookings.assignAll(
+      bookings
+          .where((booking) =>
+              booking.startTime.isBefore(now) && booking.endTime.isAfter(now))
+          .toList(),
+    );
+    upcomingBookings.assignAll(
+      bookings.where((booking) => booking.startTime.isAfter(now)).toList(),
+    );
+    endedBookings.assignAll(
+      bookings.where((booking) => booking.endTime.isBefore(now)).toList(),
+    );
   }
-
-  List<BookingModel> getBookingsByRoomAndDate(String roomId, DateTime date) {
-    return bookings
-        .where((booking) =>
-            booking.roomId == roomId && booking.date.isAtSameMomentAs(date))
-        .toList();
-  }
+  
 }

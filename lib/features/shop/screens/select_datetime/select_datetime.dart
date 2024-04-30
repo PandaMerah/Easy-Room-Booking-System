@@ -49,9 +49,16 @@ class SelectDateTime extends StatelessWidget {
                 ],
               );
             }),
-            const TCalendar(),
+            const Padding(
+              padding: EdgeInsets.only(left: 50.0, right: 50, bottom: 20),
+              child: TCalendar(),
+            ),
             const TDivider(),
-            const TTimePicker(),
+            const SizedBox(height: TSizes.spaceBtwSections),
+            const Padding(
+              padding: EdgeInsets.only(left: 40, right: 40),
+              child: TTimePicker(),
+            ),
           ],
         ),
       ),

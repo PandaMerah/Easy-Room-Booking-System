@@ -31,11 +31,10 @@ class BookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bookingController = Get.put(BookingController());
+    final BookingController bookingController = Get.find<BookingController>();
     final roomController = Get.put(HomeController());
-    final List<BookingModel> bookings = bookingController.getAllBookings();
     final List<RoomModel> rooms = roomController.getRooms();
-    final dark = THelperFunctions.isDarkMode(context);
+    bookingController.fetchAllBookingsWithRoomDetails();
 
     return DefaultTabController(
       length: 3,
@@ -56,9 +55,10 @@ class BookingsScreen extends StatelessWidget {
             Expanded(
               child: TabBarView(
                 children: [
-                  buildBookingGrid(bookings, rooms), // Active bookings
-                  buildBookingGrid(bookings, rooms), // Upcoming bookings
-                  buildBookingGrid(bookings, rooms), // Ended bookings
+                  Obx(() => buildBookingGrid(bookingController.activeBookings)),
+                  Obx(() =>
+                      buildBookingGrid(bookingController.upcomingBookings)),
+                  Obx(() => buildBookingGrid(bookingController.endedBookings)),
                 ],
               ),
             ),
@@ -67,23 +67,20 @@ class BookingsScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-Widget buildBookingGrid(List<BookingModel> bookings, List<RoomModel> rooms) {
-  return SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.all(TSizes.defaultSpace),
-      child: TSmallGridLayout(
-        itemCount: bookings.length,
-        itemBuilder: (context, index) {
-          final RoomModel room = rooms.firstWhere(
-              (r) => r.id == bookings[index].roomId,
-              orElse: () => RoomModel
-                  .empty() // Assuming RoomModel.empty() returns a placeholder
-              );
-          return BookingCardHorizontal(booking: bookings[index], room: room);
-        },
+  Widget buildBookingGrid(RxList<BookingModel> bookings) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(TSizes.defaultSpace),
+        child: TSmallGridLayout(
+          itemCount: bookings.length,
+          itemBuilder: (context, index) {
+            final BookingModel booking = bookings[index];
+            final RoomModel room = booking.roomDetails ?? RoomModel.empty();
+            return BookingCardHorizontal(booking: booking, room: room);
+          },
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

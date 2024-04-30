@@ -1,4 +1,7 @@
+// ignore_for_file: unused_import
+
 import 'package:cwt_ecommerce_ui_kit/common/widgets/shimmer/shimmer.dart';
+import 'package:cwt_ecommerce_ui_kit/features/shop/controllers/available_room_controller.dart';
 import 'package:cwt_ecommerce_ui_kit/features/shop/controllers/room_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,20 +14,22 @@ class RoomList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final roomController = Get.find<RoomController>();
+    // final roomController = Get.find<RoomController>();
+    final AvailableRoomController controller =
+        Get.find<AvailableRoomController>();
 
     return Obx(() {
-      if (roomController.isLoading.value) {
-        return const TShimmerEffect(
-            width: 55, height: 55, radius: 55); // Loading indicator
-      }
+      // if (roomController.isLoading.value) {
+      //   return const TShimmerEffect(
+      //       width: 55, height: 55, radius: 55); // Loading indicator
+      // }
 
       return TGridLayout(
-        itemCount: roomController.allRooms.length,
+        itemCount: controller.availableRooms.length,
         itemBuilder: (_, index) {
           return TRoomCardVertical(
-              room: roomController
-                  .allRooms[index]); // Make sure to return the widget
+              room: controller
+                  .availableRooms[index]); // Make sure to return the widget
         },
       );
     });

@@ -99,19 +99,23 @@ class ProceedBooking extends StatelessWidget {
                   Text("Additional Details",
                       style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: TSizes.spaceBtwItems),
-                  Text("Booking Title",
+                  Text("Class Involved",
                       style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: TSizes.spaceBtwInputFields / 2),
                   TextField(
                     onChanged: (value) => controller.bookingTitle.value = value,
-                    decoration: const InputDecoration(labelText: "Optional"),
+                    decoration: const InputDecoration(
+                        labelText:
+                            "Which class will be using this room (Optional)"),
                   ),
                   const SizedBox(height: TSizes.spaceBtwItems / 2),
                   Text("Notes", style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: TSizes.spaceBtwInputFields / 2),
                   TextField(
                     onChanged: (value) => controller.bookingNotes.value = value,
-                    decoration: const InputDecoration(labelText: "Optional"),
+                    decoration: const InputDecoration(
+                        labelText:
+                            "What subject is this room used for (Optional)"),
                   ),
                 ],
               )
